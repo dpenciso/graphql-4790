@@ -36,175 +36,116 @@ const Query = objectType({
         return context.prisma.bosses.findMany()
       },
     })
+  },
+})
 
-    // t.nonNull.list.nonNull.field('feed', {
-    //   type: 'Post',
+const Mutation = objectType({
+  name: 'Mutation',
+  definition(t) {
+    // t.nonNull.field('signupUser', {
+    //   type: 'User',
     //   args: {
-    //     searchString: stringArg(),
-    //     skip: intArg(),
-    //     take: intArg(),
-    //     orderBy: arg({
-    //       type: 'PostOrderByUpdatedAtInput',
-    //     }),
+    //     data: nonNull(
+    //       arg({
+    //         type: 'UserCreateInput',
+    //       }),
+    //     ),
     //   },
-    //   resolve: (_parent, args, context) => {
-    //     const or = args.searchString
-    //       ? {
-    //         OR: [
-    //           { title: { contains: args.searchString } },
-    //           { content: { contains: args.searchString } },
-    //         ],
-    //       }
-    //       : {}
-
-    //     return context.prisma.post.findMany({
-    //       where: {
-    //         published: true,
-    //         ...or,
+    //   resolve: (_, args, context) => {
+    //     const postData = args.data.posts
+    //       ? args.data.posts.map((post) => {
+    //         return { title: post.title, content: post.content || undefined }
+    //       })
+    //       : []
+    //     return context.prisma.user.create({
+    //       data: {
+    //         name: args.data.name,
+    //         email: args.data.email,
+    //         posts: {
+    //           create: postData,
+    //         },
     //       },
-    //       take: args.take || undefined,
-    //       skip: args.skip || undefined,
-    //       orderBy: args.orderBy || undefined,
     //     })
     //   },
     // })
 
-    // t.list.field('draftsByUser', {
+    t.field('createCharacter', {
+      type: 'Character',
+      args: {
+        data: nonNull(
+          arg({
+            type: 'CharacterCreateInput',
+          }),
+        ),
+      },
+      resolve: (_, args, context) => {
+        return context.prisma.character.create({
+          data: {
+            name: args.data.name,
+            description: args.data.description,
+            gender: args.data.gender,
+            race: args.data.race,
+          },
+        })
+      },
+    })
+
+    // t.field('togglePublishPost', {
     //   type: 'Post',
     //   args: {
-    //     userUniqueInput: nonNull(
-    //       arg({
-    //         type: 'UserUniqueInput',
-    //       }),
-    //     ),
+    //     id: nonNull(intArg()),
     //   },
-    //   resolve: (_parent, args, context) => {
-    //     return context.prisma.user
-    //       .findUnique({
-    //         where: {
-    //           id: args.userUniqueInput.id || undefined,
-    //           email: args.userUniqueInput.email || undefined,
+    //   resolve: async (_, args, context) => {
+    //     const post = await context.prisma.post.findUnique({
+    //       where: { id: args.id || undefined },
+    //       select: {
+    //         published: true,
+    //       },
+    //     })
+
+    //     if (!post) {
+    //       throw new Error(
+    //         `Post with ID ${args.id} does not exist in the database.`,
+    //       )
+    //     }
+
+    //     return context.prisma.post.update({
+    //       where: { id: args.id || undefined },
+    //       data: { published: !post.published },
+    //     })
+    //   },
+    // })
+
+    // t.field('incrementPostViewCount', {
+    //   type: 'Post',
+    //   args: {
+    //     id: nonNull(intArg()),
+    //   },
+    //   resolve: (_, args, context) => {
+    //     return context.prisma.post.update({
+    //       where: { id: args.id || undefined },
+    //       data: {
+    //         viewCount: {
+    //           increment: 1,
     //         },
-    //       })
-    //       .posts({
-    //         where: {
-    //           published: false,
-    //         },
-    //       })
+    //       },
+    //     })
+    //   },
+    // })
+
+    // t.field('deletePost', {
+    //   type: 'Post',
+    //   args: {
+    //     id: nonNull(intArg()),
+    //   },
+    //   resolve: (_, args, context) => {
+    //     return context.prisma.post.delete({
+    //       where: { id: args.id },
+    //     })
     //   },
     // })
   },
 })
-
-// const Mutation = objectType({
-//   name: 'Mutation',
-//   definition(t) {
-//     t.nonNull.field('signupUser', {
-//       type: 'User',
-//       args: {
-//         data: nonNull(
-//           arg({
-//             type: 'UserCreateInput',
-//           }),
-//         ),
-//       },
-//       resolve: (_, args, context) => {
-//         const postData = args.data.posts
-//           ? args.data.posts.map((post) => {
-//             return { title: post.title, content: post.content || undefined }
-//           })
-//           : []
-//         return context.prisma.user.create({
-//           data: {
-//             name: args.data.name,
-//             email: args.data.email,
-//             posts: {
-//               create: postData,
-//             },
-//           },
-//         })
-//       },
-//     })
-
-//     t.field('createDraft', {
-//       type: 'Post',
-//       args: {
-//         data: nonNull(
-//           arg({
-//             type: 'PostCreateInput',
-//           }),
-//         ),
-//         authorEmail: nonNull(stringArg()),
-//       },
-//       resolve: (_, args, context) => {
-//         return context.prisma.post.create({
-//           data: {
-//             title: args.data.title,
-//             content: args.data.content,
-//             author: {
-//               connect: { email: args.authorEmail },
-//             },
-//           },
-//         })
-//       },
-//     })
-
-//     t.field('togglePublishPost', {
-//       type: 'Post',
-//       args: {
-//         id: nonNull(intArg()),
-//       },
-//       resolve: async (_, args, context) => {
-//         const post = await context.prisma.post.findUnique({
-//           where: { id: args.id || undefined },
-//           select: {
-//             published: true,
-//           },
-//         })
-
-//         if (!post) {
-//           throw new Error(
-//             `Post with ID ${args.id} does not exist in the database.`,
-//           )
-//         }
-
-//         return context.prisma.post.update({
-//           where: { id: args.id || undefined },
-//           data: { published: !post.published },
-//         })
-//       },
-//     })
-
-//     t.field('incrementPostViewCount', {
-//       type: 'Post',
-//       args: {
-//         id: nonNull(intArg()),
-//       },
-//       resolve: (_, args, context) => {
-//         return context.prisma.post.update({
-//           where: { id: args.id || undefined },
-//           data: {
-//             viewCount: {
-//               increment: 1,
-//             },
-//           },
-//         })
-//       },
-//     })
-
-//     t.field('deletePost', {
-//       type: 'Post',
-//       args: {
-//         id: nonNull(intArg()),
-//       },
-//       resolve: (_, args, context) => {
-//         return context.prisma.post.delete({
-//           where: { id: args.id },
-//         })
-//       },
-//     })
-//   },
-// })
 
 const Character = objectType({
   name: 'Character',
@@ -255,13 +196,15 @@ const Bosses = objectType({
 //   },
 // })
 
-// const PostCreateInput = inputObjectType({
-//   name: 'PostCreateInput',
-//   definition(t) {
-//     t.nonNull.string('title')
-//     t.string('content')
-//   },
-// })
+const CharacterCreateInput = inputObjectType({
+  name: 'CharacterCreateInput',
+  definition(t) {
+    t.nonNull.string('name')
+    t.nonNull.string('description')
+    t.string('gender')
+    t.string('race')
+  },
+})
 
 // const UserCreateInput = inputObjectType({
 //   name: 'UserCreateInput',
@@ -275,13 +218,13 @@ const Bosses = objectType({
 const schema = makeSchema({
   types: [
     Query,
-    // Mutation,
+    Mutation,
     Character,
     Places,
     Bosses,
     // UserUniqueInput,
     // UserCreateInput,
-    // PostCreateInput,
+    CharacterCreateInput,
     // SortOrder,
     // PostOrderByUpdatedAtInput,
     DateTime,
