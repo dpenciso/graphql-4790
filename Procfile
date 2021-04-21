@@ -1,1 +1,1 @@
-webn: node server.js
+webn: node src/server.js
