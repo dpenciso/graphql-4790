@@ -30,6 +30,13 @@ scalar DateTime
 
 type Mutation {
   createCharacter(data: CharacterCreateInput!): Character
+  createPlace(data: PlaceCreateInput!): Places!
+  deleteCharacter(id: Int!): Character
+}
+
+input PlaceCreateInput {
+  description: String!
+  name: String!
 }
 
 type Places {

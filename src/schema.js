@@ -42,32 +42,24 @@ const Query = objectType({
 const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
-    // t.nonNull.field('signupUser', {
-    //   type: 'User',
-    //   args: {
-    //     data: nonNull(
-    //       arg({
-    //         type: 'UserCreateInput',
-    //       }),
-    //     ),
-    //   },
-    //   resolve: (_, args, context) => {
-    //     const postData = args.data.posts
-    //       ? args.data.posts.map((post) => {
-    //         return { title: post.title, content: post.content || undefined }
-    //       })
-    //       : []
-    //     return context.prisma.user.create({
-    //       data: {
-    //         name: args.data.name,
-    //         email: args.data.email,
-    //         posts: {
-    //           create: postData,
-    //         },
-    //       },
-    //     })
-    //   },
-    // })
+    t.nonNull.field('createPlace', {
+      type: 'Places',
+      args: {
+        data: nonNull(
+          arg({
+            type: 'PlaceCreateInput',
+          }),
+        ),
+      },
+      resolve: (_, args, context) => {
+        return context.prisma.place.create({
+          data: {
+            name: args.data.name,
+            description: args.data.description,
+          },
+        })
+      },
+    })
 
     t.field('createCharacter', {
       type: 'Character',
@@ -133,17 +125,17 @@ const Mutation = objectType({
     //   },
     // })
 
-    // t.field('deletePost', {
-    //   type: 'Post',
-    //   args: {
-    //     id: nonNull(intArg()),
-    //   },
-    //   resolve: (_, args, context) => {
-    //     return context.prisma.post.delete({
-    //       where: { id: args.id },
-    //     })
-    //   },
-    // })
+    t.field('deleteCharacter', {
+      type: 'Character',
+      args: {
+        id: nonNull(intArg()),
+      },
+      resolve: (_, args, context) => {
+        return context.prisma.character.delete({
+          where: { id: args.id },
+        })
+      },
+    })
   },
 })
 
@@ -206,14 +198,13 @@ const CharacterCreateInput = inputObjectType({
   },
 })
 
-// const UserCreateInput = inputObjectType({
-//   name: 'UserCreateInput',
-//   definition(t) {
-//     t.nonNull.string('email')
-//     t.string('name')
-//     t.list.nonNull.field('posts', { type: 'PostCreateInput' })
-//   },
-// })
+const PlaceCreateInput = inputObjectType({
+  name: 'PlaceCreateInput',
+  definition(t) {
+    t.nonNull.string('name')
+    t.nonNull.string('description')
+  },
+})
 
 const schema = makeSchema({
   types: [
@@ -223,7 +214,7 @@ const schema = makeSchema({
     Places,
     Bosses,
     // UserUniqueInput,
-    // UserCreateInput,
+    PlaceCreateInput,
     CharacterCreateInput,
     // SortOrder,
     // PostOrderByUpdatedAtInput,

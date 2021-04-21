@@ -18,7 +18,8 @@
     "seed:characters": "node prisma/seed/seedCharacters.js",
     "seed:bosses": "node prisma/seed/seedBosses.js",
     "seed:places": "node prisma/seed/seedPlaces.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "seed:all": "node prisma/seed/seedCharacters.js && node prisma/seed/seedBosses.js && node prisma/seed/seedPlaces.js"
   },
   "devDependencies": {
     "nodemon": "2.0.7",
